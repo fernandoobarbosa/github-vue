@@ -1,28 +1,40 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div class="container">
+      <HelloWorld @filter="searchData" :users="users" />
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import HelloWorld from "./components/HelloWorld.vue";
+import axios from "axios";
 export default {
-  name: 'App',
+  data: () => ({
+    users: [],
+  }),
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
+    HelloWorld,
+  },
+  methods: {
+    async searchData(searchInput, page) {
+      try {
+        const { data } = await axios({
+          method: "get",
+          url:
+            " https://api.github.com/search/repositories?q=" +
+            searchInput.toLowerCase() +
+            "&order=desc&page=" +
+            page +
+            "&per_page=10",
+        });
+        console.log(data);
+        this.users = data.items;
+      } catch (e) {
+        console.log(e);
+      }
+    },
+  },
+};
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
